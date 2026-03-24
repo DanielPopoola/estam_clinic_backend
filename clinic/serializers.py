@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
@@ -12,6 +14,11 @@ class PatientSerializer(serializers.ModelSerializer):
 		model = Patient
 		fields = '__all__'
 		read_only_fields = ['id', 'created_at', 'updated_at']
+
+	def validate_date_of_birth(self, value):
+		if value > date.today():
+			raise serializers.ValidationError('Date of birth cannot be in the future.')
+		return value
 
 
 class AppointmentSerializer(serializers.ModelSerializer):

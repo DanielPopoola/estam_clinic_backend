@@ -1,4 +1,5 @@
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 from accounts.models import UserRole
 
@@ -9,6 +10,9 @@ from .selectors import is_doctor_double_booked
 def create_appointment(*, patient, doctor, scheduled_at, status, reason='', notes=''):
 	if doctor.role != UserRole.DOCTOR:
 		raise ValidationError('Appointments can only be assigned to users with the DOCTOR role.')
+
+	if scheduled_at <= timezone.now():
+		raise ValidationError('Cannot book in the past.')
 
 	if is_doctor_double_booked(doctor, scheduled_at):
 		raise ValidationError('Doctor is already booked at the selected time.')
