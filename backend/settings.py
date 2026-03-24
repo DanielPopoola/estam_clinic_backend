@@ -1,5 +1,7 @@
 import os
+from datetime import timedelta
 from pathlib import Path
+
 import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -27,6 +29,7 @@ INSTALLED_APPS = [
 	'django.contrib.staticfiles',
 	'rest_framework',
 	'rest_framework_simplejwt',
+	'drf_spectacular',
 	'corsheaders',
 	'accounts',
 	'clinic',
@@ -113,10 +116,8 @@ CORS_ALLOWED_ORIGINS = env.list(
 REST_FRAMEWORK = {
 	'DEFAULT_AUTHENTICATION_CLASSES': ('rest_framework_simplejwt.authentication.JWTAuthentication',),
 	'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated',),
+	'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
-
-# 4. SimpleJWT Configuration
-from datetime import timedelta
 
 SIMPLE_JWT = {
 	'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  # Access token expires in 1 hour
@@ -124,4 +125,10 @@ SIMPLE_JWT = {
 	'ROTATE_REFRESH_TOKENS': True,
 	'BLACKLIST_AFTER_ROTATION': True,
 	'AUTH_HEADER_TYPES': ('Bearer',),  # Frontend sends: "Authorization: Bearer <token>"
+}
+
+SPECTACULAR_SETTINGS = {
+	'TITLE': 'Estam Clinic API',
+	'DESCRIPTION': 'API documentation for the Estam Clinic backend',
+	'VERSION': '1.0.0',
 }
