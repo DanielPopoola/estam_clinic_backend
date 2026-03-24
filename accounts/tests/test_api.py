@@ -66,7 +66,9 @@ class AuthenticationAndRBACAPITests(TestCase):
 		)
 
 		expired_token = AccessToken.for_user(doctor)
-		expired_token.set_exp(from_time=timezone.now() - timedelta(days=1), lifetime=timedelta(seconds=1))
+		expired_token.set_exp(
+			from_time=timezone.now() - timedelta(days=1), lifetime=timedelta(seconds=1)
+		)
 
 		self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {expired_token}')
 		response = self.client.get(reverse('patient-detail', kwargs={'pk': patient.id}))

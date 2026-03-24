@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from accounts.serializers import UserSerializer
+
 from .models import Appointment, MedicalRecord, Patient
 
 User = get_user_model()
