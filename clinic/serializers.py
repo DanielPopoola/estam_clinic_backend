@@ -21,6 +21,13 @@ class PatientSerializer(serializers.ModelSerializer):
 			raise serializers.ValidationError('Date of birth cannot be in the future.')
 		return value
 
+	def validate_phone_number(self, value):
+		if len(value) > 13:
+			raise serializers.ValidationError(
+				'Phone number must be 13 characters or fewer.'
+			)
+		return value
+
 
 class AppointmentSerializer(serializers.ModelSerializer):
 	doctor_details = UserSerializer(source='doctor', read_only=True)

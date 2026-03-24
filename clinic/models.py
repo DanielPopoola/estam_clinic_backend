@@ -2,6 +2,11 @@ from django.conf import settings
 from django.db import models
 
 
+class PatientCategory(models.TextChoices):
+	STUDENT = 'STUDENT', 'Student'
+	STAFF = 'STAFF', 'Staff'
+
+
 class Patient(models.Model):
 	first_name = models.CharField(max_length=100)
 	last_name = models.CharField(max_length=100)
@@ -10,6 +15,13 @@ class Patient(models.Model):
 	phone_number = models.CharField(max_length=20)
 	email = models.EmailField(blank=True)
 	address = models.TextField(blank=True)
+	category = models.CharField(
+		max_length=10,
+		choices=PatientCategory.choices,
+		default=PatientCategory.STUDENT,
+	)
+	blood_group = models.CharField(max_length=5, blank=True)
+	allergies = models.TextField(blank=True, help_text='Comma-separated list of known allergies')
 	emergency_contact_name = models.CharField(max_length=255, blank=True)
 	emergency_contact_phone = models.CharField(max_length=20, blank=True)
 	created_at = models.DateTimeField(auto_now_add=True)
