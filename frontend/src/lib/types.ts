@@ -1,15 +1,19 @@
-export type Role = 'ADMIN' | 'DOCTOR' | 'RECEPTIONIST';
+// ── Users / Auth ──────────────────────────────────────────────────────────────
+export type UserRole = 'ADMIN' | 'DOCTOR' | 'RECEPTIONIST';
 
 export interface User {
   id: number;
   username: string;
-  email: string;
   first_name: string;
   last_name: string;
-  role: Role;
+  email: string;
+  role: UserRole;
   is_active: boolean;
-  date_joined?: string;
+  date_joined: string;
 }
+
+// ── Patients ──────────────────────────────────────────────────────────────────
+export type PatientCategory = 'STUDENT' | 'STAFF';
 
 export interface Patient {
   id: number;
@@ -20,7 +24,7 @@ export interface Patient {
   phone_number: string;
   email: string;
   address: string;
-  category: 'STUDENT' | 'STAFF';
+  category: PatientCategory;
   blood_group: string;
   allergies: string;
   emergency_contact_name: string;
@@ -29,12 +33,15 @@ export interface Patient {
   updated_at: string;
 }
 
+// ── Appointments ──────────────────────────────────────────────────────────────
+export type AppointmentStatus = 'SCHEDULED' | 'COMPLETED' | 'CANCELLED';
+
 export interface Appointment {
   id: number;
   patient: number;
   doctor: number;
   scheduled_at: string;
-  status: 'SCHEDULED' | 'COMPLETED' | 'CANCELLED';
+  status: AppointmentStatus;
   reason: string;
   notes: string;
   created_at: string;
@@ -43,6 +50,7 @@ export interface Appointment {
   patient_details: Patient;
 }
 
+// ── Medical Records ────────────────────────────────────────────────────────────
 export interface MedicalRecord {
   id: number;
   appointment: number;
@@ -52,22 +60,10 @@ export interface MedicalRecord {
   follow_up_instructions: string;
   created_at: string;
   updated_at: string;
-  appointment_details?: Appointment;
+  appointment_details: Appointment;
 }
 
-export interface DashboardChartPoint {
-  date: string;
-  day: string;
-  patients: number;
-}
-
-export interface DashboardStats {
-  todays_appointments: number;
-  new_patients: number;
-  pending_appointments: number;
-  chart_data: DashboardChartPoint[];
-}
-
+// ── Pagination wrapper ─────────────────────────────────────────────────────────
 export interface Paginated<T> {
   count: number;
   next: string | null;
@@ -75,7 +71,10 @@ export interface Paginated<T> {
   results: T[];
 }
 
-export interface TokenPair {
-  access: string;
-  refresh: string;
+// ── Dashboard ──────────────────────────────────────────────────────────────────
+export interface DashboardStats {
+  todays_appointments: number;
+  new_patients: number;
+  pending_appointments: number;
+  chart_data: Array<{ date: string; day: string; patients: number }>;
 }
