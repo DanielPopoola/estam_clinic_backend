@@ -36,3 +36,27 @@ select = [
     "SIM",
     "I",
 ]
+
+
+[tool.coverage.run]
+source = ["."]
+omit = ["*/tests/*", "*/__pycache__/*", "*/htmlcov/*", "*/.venv/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if __name__ == .__main__.:",
+    "raise AssertionError",
+    "raise NotImplementedError",
+]
+
+
+
+[dependency-groups]
+dev = [
+    "model-bakery>=1.23.3",
+    "pytest>=9.0.2",
+    "pytest-cov>=7.1.0",
+    "pytest-django>=4.12.0",
+]
