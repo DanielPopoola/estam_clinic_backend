@@ -120,9 +120,20 @@ STATIC_URL = 'static/'
 
 AUTH_USER_MODEL = 'accounts.User'
 
-CORS_ALLOWED_ORIGINS = env.list(
-	'CORS_ALLOWED_ORIGINS', default=['http://localhost:5173', 'http://localhost:3000']
-)
+configured_cors_origins = env.list('CORS_ALLOWED_ORIGINS', default=[])
+dev_frontend_origins = [
+	'http://localhost:5173',
+	'http://127.0.0.1:5173',
+	'http://localhost:3000',
+	'http://127.0.0.1:3000',
+]
+
+# Always allow common local frontend hosts during development, even when
+# CORS_ALLOWED_ORIGINS is defined with only localhost entries.
+if DEBUG:
+	CORS_ALLOWED_ORIGINS = list(dict.fromkeys([*configured_cors_origins, *dev_frontend_origins]))
+else:
+	CORS_ALLOWED_ORIGINS = configured_cors_origins
 
 REST_FRAMEWORK = {
 	'DEFAULT_AUTHENTICATION_CLASSES': ('rest_framework_simplejwt.authentication.JWTAuthentication',),

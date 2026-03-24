@@ -24,6 +24,13 @@ export const api = axios.create({
 
 // Attach the Bearer token to every outgoing request
 api.interceptors.request.use((config) => {
+  const requestUrl = config.url ?? '';
+  const isAuthEndpoint =
+    requestUrl.includes('/api/accounts/token/') ||
+    requestUrl.includes('/api/accounts/token/refresh/');
+
+  if (isAuthEndpoint) return config;
+
   const access = token.getAccess();
   if (access) config.headers.Authorization = `Bearer ${access}`;
   return config;
