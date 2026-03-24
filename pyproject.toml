@@ -11,4 +11,27 @@ dependencies = [
     "djangorestframework>=3.17.0",
     "djangorestframework-simplejwt>=5.5.1",
     "python-decouple>=3.8",
+    "ruff>=0.15.7",
+]
+
+[tool.ruff]
+line-length = 105
+exclude = [
+    "tests",
+    "migrations",
+]
+
+[tool.ruff.format]
+quote-style = "single"
+indent-style = "tab"
+docstring-code-format = true
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "F",
+    "UP",
+    "B",
+    "SIM",
+    "I",
 ]
