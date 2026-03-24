@@ -219,3 +219,51 @@ class ClinicAPITests(TestCase):
 			content_type='application/json',
 		)
 		self.assertEqual(response.status_code, 400)
+
+
+	def test_appointment_update_conflict_returns_400(self):
+		self.client.force_authenticate(user=self.receptionist)
+		patient_a = self.create_patient('MAT-CON-1')
+		patient_b = self.create_patient('MAT-CON-2')
+		conflict_time = timezone.now() + timedelta(days=2)
+
+		appointment_to_update = Appointment.objects.create(
+			doctor=self.doctor,
+			patient=patient_a,
+			scheduled_at=timezone.now() + timedelta(days=1),
+			status=AppointmentStatus.SCHEDULED,
+		)
+		Appointment.objects.create(
+			doctor=self.doctor,
+			patient=patient_b,
+			scheduled_at=conflict_time,
+			status=AppointmentStatus.SCHEDULED,
+		)
+
+		response = self.client.patch(
+			reverse('appointment-detail', kwargs={'pk': appointment_to_update.id}),
+			{'scheduled_at': conflict_time.isoformat()},
+			format='json',
+		)
+
+		self.assertEqual(response.status_code, 400)
+
+	def test_doctor_medical_record_update_succeeds(self):
+		self.client.force_authenticate(user=self.doctor)
+		patient = self.create_patient('MAT-MR-UPD-1')
+		appointment = Appointment.objects.create(
+			doctor=self.doctor,
+			patient=patient,
+			scheduled_at=timezone.now() + timedelta(days=1),
+		)
+		record = MedicalRecord.objects.create(appointment=appointment, diagnosis='Initial')
+
+		response = self.client.patch(
+			reverse('record-detail', kwargs={'pk': record.id}),
+			{'diagnosis': 'Updated diagnosis'},
+			format='json',
+		)
+
+		self.assertEqual(response.status_code, 200)
+		record.refresh_from_db()
+		self.assertEqual(record.diagnosis, 'Updated diagnosis')
