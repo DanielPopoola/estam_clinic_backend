@@ -1,3 +1,4 @@
+import importlib.util
 import os
 from datetime import timedelta
 from pathlib import Path
@@ -29,15 +30,19 @@ INSTALLED_APPS = [
 	'django.contrib.staticfiles',
 	'rest_framework',
 	'rest_framework_simplejwt',
-	'drf_spectacular',
-	'corsheaders',
 	'accounts',
 	'clinic',
 ]
 
+if importlib.util.find_spec('drf_spectacular') is not None:
+	INSTALLED_APPS.append('drf_spectacular')
+
+if importlib.util.find_spec('corsheaders') is not None:
+	INSTALLED_APPS.append('corsheaders')
+
+
 MIDDLEWARE = [
 	'django.middleware.security.SecurityMiddleware',
-	'corsheaders.middleware.CorsMiddleware',
 	'django.contrib.sessions.middleware.SessionMiddleware',
 	'django.middleware.common.CommonMiddleware',
 	'django.middleware.csrf.CsrfViewMiddleware',
@@ -45,6 +50,9 @@ MIDDLEWARE = [
 	'django.contrib.messages.middleware.MessageMiddleware',
 	'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+if importlib.util.find_spec('corsheaders') is not None:
+	MIDDLEWARE.insert(1, 'corsheaders.middleware.CorsMiddleware')
 
 ROOT_URLCONF = 'backend.urls'
 
@@ -116,7 +124,8 @@ CORS_ALLOWED_ORIGINS = env.list(
 REST_FRAMEWORK = {
 	'DEFAULT_AUTHENTICATION_CLASSES': ('rest_framework_simplejwt.authentication.JWTAuthentication',),
 	'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated',),
-	'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+	'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+	'PAGE_SIZE': 100,
 }
 
 SIMPLE_JWT = {
@@ -132,3 +141,7 @@ SPECTACULAR_SETTINGS = {
 	'DESCRIPTION': 'API documentation for the Estam Clinic backend',
 	'VERSION': '1.0.0',
 }
+
+
+if importlib.util.find_spec('drf_spectacular') is not None:
+	REST_FRAMEWORK['DEFAULT_SCHEMA_CLASS'] = 'drf_spectacular.openapi.AutoSchema'

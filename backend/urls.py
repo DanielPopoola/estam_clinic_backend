@@ -1,11 +1,18 @@
+import importlib.util
+
 from django.contrib import admin
 from django.urls import include, path
-from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 urlpatterns = [
 	path('admin/', admin.site.urls),
 	path('api/accounts/', include('accounts.urls')),
 	path('api/clinic/', include('clinic.urls')),
-	path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-	path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
 ]
+
+if importlib.util.find_spec('drf_spectacular') is not None:
+	from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+
+	urlpatterns += [
+		path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+		path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+	]
