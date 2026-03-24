@@ -41,6 +41,8 @@ if importlib.util.find_spec('drf_spectacular') is not None:
 if importlib.util.find_spec('corsheaders') is not None:
 	INSTALLED_APPS.append('corsheaders')
 
+if importlib.util.find_spec('extensions') is not None:
+	INSTALLED_APPS.append('extensions')
 
 MIDDLEWARE = [
 	'django.middleware.security.SecurityMiddleware',
