@@ -68,3 +68,15 @@ class MedicalRecordSerializer(serializers.ModelSerializer):
 			'appointment_details',
 		]
 		read_only_fields = ['id', 'created_at', 'updated_at']
+
+class DashboardChartPointSerializer(serializers.Serializer):
+	date = serializers.DateField()
+	day = serializers.CharField()
+	patients = serializers.IntegerField()
+
+
+class DashboardStatsSerializer(serializers.Serializer):
+	todays_appointments = serializers.IntegerField()
+	new_patients = serializers.IntegerField()
+	pending_appointments = serializers.IntegerField()
+	chart_data = DashboardChartPointSerializer(many=True)

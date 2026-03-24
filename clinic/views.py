@@ -3,17 +3,21 @@ from django.db.models import Count
 from django.db.models.functions import TruncDate
 from django.utils import timezone
 from rest_framework import exceptions
-from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
+from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
 from accounts.permissions import IsDoctor
 
 from .models import Appointment, AppointmentStatus, MedicalRecord, Patient
-from .serializers import AppointmentSerializer, MedicalRecordSerializer, PatientSerializer
+from .serializers import (
+	AppointmentSerializer,
+	DashboardStatsSerializer,
+	MedicalRecordSerializer,
+	PatientSerializer,
+)
 from .services import (
 	create_appointment,
 	create_medical_record,
@@ -107,13 +111,14 @@ class MedicalRecordViewSet(ModelViewSet):
 			raise exceptions.ValidationError(exc.message) from exc
 
 
-class DashboardStatsView(APIView):
+class DashboardStatsView(GenericAPIView):
 	"""
 	Returns aggregate counts for the dashboard overview cards
 	and a 7-day patient visit trend for the chart.
 	"""
 
 	permission_classes = [IsAuthenticated]
+	serializer_class = DashboardStatsSerializer
 
 	def get(self, request):
 		today = timezone.now().date()
@@ -147,14 +152,17 @@ class DashboardStatsView(APIView):
 		for i in range(7):
 			day = seven_days_ago + timezone.timedelta(days=i)
 			chart_data.append({
-				'date': day.isoformat(),
+				'date': day,
 				'day': day.strftime('%a'),
 				'patients': counts_by_day.get(day, 0),
 			})
 
-		return Response({
+		payload = {
 			'todays_appointments': todays_appointments,
 			'new_patients': new_patients,
 			'pending_appointments': pending_appointments,
 			'chart_data': chart_data,
-		})
+		}
+		serializer = self.get_serializer(data=payload)
+		serializer.is_valid(raise_exception=True)
+		return Response(serializer.data)
