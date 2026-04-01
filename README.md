@@ -64,7 +64,7 @@ A full-stack clinic management platform purpose-built for ESTAM University Healt
 
 ```bash
 # 1. Clone the repository
-git clone <repo-url>
+git clone https://github.com/DanielPopoola/estam_clinic_backend
 cd estam-clinic
 
 # 2. Create and activate a virtual environment
