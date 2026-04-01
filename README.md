@@ -86,6 +86,28 @@ python manage.py migrate
 # 6. Create a superuser (Admin role)
 python manage.py createsuperuser
 
+## Demo seed command
+
+A seed management command is available to quickly generate demo users, roles, and related clinic data:
+
+```bash
+python manage.py seed_demo_data
+```
+
+What it creates (idempotently):
+
+- 4 users (`admin_demo`, 2 doctors, 1 receptionist)
+- 3 patients
+- 2 appointments (one completed, one scheduled)
+- 1 medical record for the completed appointment
+
+Useful options:
+
+```bash
+python manage.py seed_demo_data --password "YourPassword123!"
+python manage.py seed_demo_data --reset
+```
+
 # 7. Start the development server
 python manage.py runserver
 ```
